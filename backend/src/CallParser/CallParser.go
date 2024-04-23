@@ -32,7 +32,7 @@ func (c *CallParser) ExecutionParser(input string) string {
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("\033[31m-> Ha ocurrido un error en la línea de comandos.\033[0m")
-				Action += fmt.Sprintf("\033[31mHa ocurrido un error en la línea de comandos.\033[0m")
+				Action += fmt.Sprintf("Ha ocurrido un error en la línea de comandos.")
 			}
 		}()
 	}()
@@ -40,7 +40,7 @@ func (c *CallParser) ExecutionParser(input string) string {
 	for _, fail := range parserErrors.Errors {
 		fmt.Printf("\033[31m-> %s. [%v:%v]\033[0m\n", fail.Msg, fail.Line, fail.Column+1)
 		// Action += fmt.Sprintf("\033[31m%s. [%v:%v]\033[0m\n", fail.Msg, fail.Line, fail.Column+1)
-		Action += fmt.Sprintf("%s. [%v:%v]\n", "Comando no reconocido", fail.Line, fail.Column+1)
+		Action += fmt.Sprintf("%s.\n", "Comando no reconocido")
 	}
 
 	for _, cmd := range listener.Execute {
@@ -49,7 +49,7 @@ func (c *CallParser) ExecutionParser(input string) string {
 				if r := recover(); r != nil {
 					fmt.Println(cmd.GetType())
 					fmt.Printf("\033[31m-> %s. [%v:%v]\033[0m\n", fmt.Sprintf("%v", r), cmd.GetLine(), cmd.GetColumn())
-					Action += fmt.Sprintf("\033[31m%s. [%v:%v]\033[0m\n", fmt.Sprintf("%v", r), cmd.GetLine(), cmd.GetColumn())
+					Action += fmt.Sprintf("%s.\n", fmt.Sprintf("%v", r))
 				}
 			}()
 			if cmd.GetType() == utils.EXECUTE {
