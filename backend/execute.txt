@@ -1,0 +1,3 @@
+execute -path=../../Inputs/script.adsj
+execute -path=../../Inputs/basico.adsj
+execute -path=../../Inputs/avanzado.adsj

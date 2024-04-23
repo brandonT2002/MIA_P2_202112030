@@ -1,0 +1,22 @@
+# Crea Disco A
+mkdisk -size=10 -unit=M -fit=BF
+fdisk -size=5 -unit=M -driveletter=A -name=Particion1 -type=P -fit=FF
+fdisk -size=4 -unit=M -driveletter=A -name=Particion2 -type=e -fit=BF
+fdisk -size=4 -unit=M -driveletter=A -name=Particion3 -type=l -fit=BF
+fdisk -size=512 -unit=K -driveletter=A -name=Particion4 -fit=BF
+fdisk -add=-1 -unit=M -driveletter=A -name=Particion1
+mount -name=Particion1 -driveletter=A
+mkfs -type=full -id=A130 -fs=3fs
+login -user=root -pass=123 -id=A130
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/mbr.jpg -name=mbr
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/disk.jpg -name=disk
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/inode.jpg -name=inode
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/bloques.jpg -name=block
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/arbol.jpg -name=tree
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/journaling.jpg -name=journaling
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/bm_inode.txt -name=bm_inode
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/bm_block.txt -name=bm_block
+rep -id=A130 -path=/home/jefferson/Escritorio/MIA/P1/sb.jpg -name=sb
+# unmount -id=A130
+# rmdisk -driveletter=A
+# rep -name=mbr -id=A123
