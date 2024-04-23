@@ -1,0 +1,40 @@
+.sidebar {
+    height: 100vh;
+    /* background-color: #1a1e21; */
+    background-color: rgba(18, 18, 19, 1);
+    color: #fff;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+li:hover {
+    background-color: rgba(225, 225, 225, 0.05);
+}
+
+/* =============== */
+
+.logo {
+    color: white;
+}
+
+.logo__name {
+    font-weight: 100;
+}
+
+.logo__bold {
+    font-weight: bold;
+}
