@@ -16,16 +16,34 @@ const Console = () => {
         scrollToBottom();
     }, [messages]);
 
-    const handleMessageSend = () => {
-        if (inputValue.trim() !== '') {
-            setMessages([...messages, inputValue]);
-            setInputValue('');
+    const sendMessageToBot = async (message) => {
+        try {
+            const response = await fetch('http://127.0.0.1:8080/interpreter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ code: message })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            setMessages([...messages, { text: message, isUser: true }, { text: data.message, isUser: false }]); // Agregar mensajes del usuario y del bot a la lista de mensajes
+        } catch (error) {
+            console.error('Error sending message to bot:', error);
         }
     };
 
-    const handleKeyPress = (event) => {
+    const handleKeyPress = async (event) => {
         if (event.key === 'Enter') {
-            handleMessageSend();
+            const message = event.target.value.trim();
+            if (message !== '') {
+                setInputValue(''); // Limpiar el input después de enviar el mensaje
+                await sendMessageToBot(message);
+            }
         }
     };
 
@@ -33,7 +51,7 @@ const Console = () => {
         <div className="console">
             <div className="messages">
                 {messages.map((message, index) => (
-                    <div key={index} className="message">{message}</div>
+                    <div key={index} className={`message ${message.isUser ? "user-message" : "bot-message"}`}>{message.text}</div>
                 ))}
                 <div ref={messagesEndRef} />
             </div>
@@ -45,7 +63,13 @@ const Console = () => {
                     onKeyDown={handleKeyPress}
                     placeholder="Escribe un mensaje..."
                 />
-                <FontAwesomeIcon icon={faPaperPlane} className="icon" onClick={handleMessageSend} />
+                <FontAwesomeIcon icon={faPaperPlane} className="icon" onClick={async () => {
+                    const message = inputValue.trim();
+                    if (message !== '') {
+                        setInputValue(''); // Limpiar el input después de enviar el mensaje
+                        await sendMessageToBot(message);
+                    }
+                }} />
             </div>
         </div>
     );

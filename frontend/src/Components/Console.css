@@ -32,15 +32,24 @@
 .message {
     display: flex;
     flex-direction: row;
-    background-color: rgb(107, 138, 254);
     color: #fff;
     padding: 10px;
     margin-bottom: 5px;
     border-radius: 5px;
-    max-width: 70%; /* Limita el ancho máximo de los mensajes */
-    word-wrap: break-word; /* Hace que las palabras largas se ajusten */
-    align-self: flex-end; /* Alinea los mensajes al lado derecho */
+    max-width: 70%;
+    word-wrap: break-word;
 }
+
+.user-message {
+    background-color: rgb(107, 138, 254);
+    align-self: flex-end;
+}
+
+.bot-message {
+    background-color: rgb(47, 50, 63);
+    align-self: flex-start;
+}
+
 
 .input-container {
     position: relative;
@@ -56,6 +65,7 @@
     border-radius: 5px;
     background-color: rgb(47, 50, 63);
     color: #fff;
+    font-size: 13.6px;
     border: none;
     outline: none;
 }
