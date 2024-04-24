@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
 import Sidebar from './Components/Sidebar';
-import Console from './Components/Console'
+import Console from './Components/Console';
+import Explorer from './Components/Explorer';
 
 const App = () => {
     const [selectedOption, setSelectedOption] = useState('Consola');
@@ -17,7 +18,7 @@ const App = () => {
                 {selectedOption === 'Consola' ?
                     <Console/>
                 : (selectedOption === 'Explorador' ?
-                    <div>ExploradorExploradorExploradorExploradorExploradorExploradorExploradorExploradorExploradorExploradorExplorador</div>
+                    <Explorer/>
                 :
                     <div>ReportesReportesReportesReportesReportesReportesReportesReportesReportesReportesReportesReportesReportesReportes</div>
                 )}
