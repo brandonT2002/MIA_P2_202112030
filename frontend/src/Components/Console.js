@@ -31,7 +31,7 @@ const Console = () => {
             }
 
             const data = await response.json();
-            setMessages([...messages, { text: message, isUser: true }, { text: data.message, isUser: false }]); // Agregar mensajes del usuario y del bot a la lista de mensajes
+            setMessages([...messages, { text: message, isUser: true }, { text: data.message, isUser: false }]);
         } catch (error) {
             console.error('Error sending message to bot:', error);
         }
@@ -41,7 +41,7 @@ const Console = () => {
         if (event.key === 'Enter') {
             const message = event.target.value.trim();
             if (message !== '') {
-                setInputValue(''); // Limpiar el input después de enviar el mensaje
+                setInputValue('');
                 await sendMessageToBot(message);
             }
         }
@@ -66,7 +66,7 @@ const Console = () => {
                 <FontAwesomeIcon icon={faPaperPlane} className="icon" onClick={async () => {
                     const message = inputValue.trim();
                     if (message !== '') {
-                        setInputValue(''); // Limpiar el input después de enviar el mensaje
+                        setInputValue('');
                         await sendMessageToBot(message);
                     }
                 }} />
