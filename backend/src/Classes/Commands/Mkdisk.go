@@ -54,9 +54,11 @@ func (m *Mkdisk) Exec() {
 		file.Write(mbr.Encode())
 		file.Close()
 		fmt.Printf("\033[96m-> mkdisk: Disco %c creado exitosamente. (%s %sB) [%v:%v]\033[0m\n", env.Asciiletter, m.Params["size"], m.Params["unit"], m.Line, m.Column+1)
+		m.Result += fmt.Sprintf("mkdisk: Disco %c creado exitosamente. (%s %sB)\n", env.Asciiletter, m.Params["size"], m.Params["unit"])
 		env.Asciiletter++
 	} else {
 		fmt.Printf("\033[31m-> Error mkdisk: Faltan parámetros obligatorios. [%v:%v]\033[0m\n", m.Line, m.Column+1)
+		m.Result += fmt.Sprintf("Error mkdisk: Faltan parámetros obligatorios.\n")
 	}
 }
 
@@ -88,4 +90,4 @@ func (m *Mkdisk) GetFit() rune {
 	return 'W'
 }
 
-func (m *Mkdisk) GetResult() string { return "" }
+func (m *Mkdisk) GetResult() string { return m.Result }

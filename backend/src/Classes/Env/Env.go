@@ -30,7 +30,7 @@ var CurrentLogged = struct {
 }
 
 func GetPath(driveletter string) string {
-	return fmt.Sprintf("/home/jefferson/Escritorio/MIA/P1/%s.dsk", driveletter)
+	return fmt.Sprintf("/home/jefferson/Escritorio/SO/%s.dsk", driveletter)
 }
 
 /*

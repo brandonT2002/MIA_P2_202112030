@@ -4,10 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 const Console = () => {
-    const [messages, setMessages] = useState(() => {
-        const storedMessages = localStorage.getItem('messages');
-        return storedMessages ? JSON.parse(storedMessages) : [];
-    });
+    const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
     const messagesEndRef = useRef(null);
 
@@ -17,7 +14,6 @@ const Console = () => {
 
     useEffect(() => {
         scrollToBottom();
-        localStorage.setItem('messages', JSON.stringify(messages)); // Guardar mensajes en el almacenamiento local
     }, [messages]);
 
     const sendMessageToBot = async (message) => {
