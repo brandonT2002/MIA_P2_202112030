@@ -2,9 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import "./Console.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
+import { useMessageContext } from './MessageContext';
 
 const Console = () => {
-    const [messages, setMessages] = useState([]);
+    const { messages, addMessage } = useMessageContext();
     const [inputValue, setInputValue] = useState('');
     const messagesEndRef = useRef(null);
 
@@ -31,7 +32,8 @@ const Console = () => {
             }
 
             const data = await response.json();
-            setMessages([...messages, { text: message, isUser: true }, { text: data.message, isUser: false }]);
+            addMessage({ text: message, isUser: true });
+            addMessage({ text: data.message, isUser: false });
         } catch (error) {
             console.error('Error sending message to bot:', error);
         }
