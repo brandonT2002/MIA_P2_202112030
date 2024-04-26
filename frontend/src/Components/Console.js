@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import "./Console.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -6,15 +6,31 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 const Console = () => {
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
-    const messagesEndRef = useRef(null);
-
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
 
     useEffect(() => {
-        scrollToBottom();
-    }, [messages]);
+        fetchMessages();
+    }, []);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            fetchMessages();
+        }, 5000);
+
+        return () => clearInterval(intervalId);
+    }, []);
+
+    const fetchMessages = async () => {
+        try {
+            const response = await fetch('http://127.0.0.1:8080/messages');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setMessages(data.messages);
+        } catch (error) {
+            console.error('Error fetching messages:', error);
+        }
+    };
 
     const sendMessageToBot = async (message) => {
         try {
@@ -31,7 +47,7 @@ const Console = () => {
             }
 
             const data = await response.json();
-            setMessages([...messages, { text: message, isUser: true }, { text: data.message, isUser: false }]);
+            fetchMessages();
         } catch (error) {
             console.error('Error sending message to bot:', error);
         }
@@ -50,10 +66,9 @@ const Console = () => {
     return (
         <div className="console">
             <div className="messages">
-                {messages.map((message, index) => (
-                    <div key={index} className={`message ${message.isUser ? "user-message" : "bot-message"}`}>{message.text}</div>
+                {messages.map((conversation, index) => (
+                    <><div key={index} className="message user-message">{conversation[0]}</div><div key={index} className="message bot-message">{conversation[1]}</div></>
                 ))}
-                <div ref={messagesEndRef} />
             </div>
             <div className="input-container">
                 <input

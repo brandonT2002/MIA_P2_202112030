@@ -40,6 +40,7 @@
     max-width: 70%;
     height: 3rem;
     word-wrap: break-word;
+    font-size: 15.5px;
 }
 
 .user-message {
@@ -67,7 +68,7 @@
     border-radius: 5px;
     background-color: rgb(47, 50, 63);
     color: #fff;
-    font-size: 13.6px;
+    font-size: 15.5px;
     border: none;
     outline: none;
 }

@@ -11,15 +11,15 @@ const Sidebar = ({ onOptionSelect }) => {
             </div>
             <ul>
                 <li onClick={() => onOptionSelect('Consola')}>
-                    <FontAwesomeIcon icon={faTerminal} className="sidebar-icon" /> {/* Agrega el icono */}
+                    <FontAwesomeIcon icon={faTerminal} className="sidebar-icon" />
                     Consola
                 </li>
                 <li onClick={() => onOptionSelect('Explorador')}>
-                    <FontAwesomeIcon icon={faFolderOpen} className="sidebar-icon" /> {/* Agrega el icono */}
+                    <FontAwesomeIcon icon={faFolderOpen} className="sidebar-icon" />
                     Explorador
                 </li>
                 <li onClick={() => onOptionSelect('Reportes')}>
-                    <FontAwesomeIcon icon={faChartBar} className="sidebar-icon" /> {/* Agrega el icono */}
+                    <FontAwesomeIcon icon={faChartBar} className="sidebar-icon" />
                     Reportes
                 </li>
             </ul>

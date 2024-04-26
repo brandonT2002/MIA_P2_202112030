@@ -1,8 +1,10 @@
 package main
 
 import (
-	callparser "mia/CallParser"
+	"fmt"
 	"os"
+
+	callparser "mia/CallParser"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -12,10 +14,14 @@ type Console struct {
 	Code string `json:"code"`
 }
 
-var Call *callparser.CallParser
+var (
+	Call           *callparser.CallParser
+	Conversaciones [][]string
+)
 
 func main() {
 	Call = &callparser.CallParser{}
+	Conversaciones = [][]string{}
 	app := fiber.New()
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
@@ -28,6 +34,7 @@ func main() {
 
 	app.Post("/interpreter", parser)
 	app.Get("/files", getFiles)
+	app.Get("/messages", getMessages)
 
 	app.Listen(":8080")
 }
@@ -40,43 +47,60 @@ func parser(c *fiber.Ctx) error {
 
 	result := Call.ExecutionParser(console.Code)
 
+	conversation := []string{console.Code, result}
+	Conversaciones = append(Conversaciones, conversation)
+
 	return c.JSON(fiber.Map{
 		"message": result,
 	})
 }
 
-func getFiles(c *fiber.Ctx) error {
-	directorio := "/home/jefferson/Escritorio/SO"
+func verChat(chat [][]string) {
+	for i := 0; i < len(chat); i++ {
+		for j := 0; j < len(chat[i]); j++ {
+			fmt.Printf("-> %s\n", chat[i][j])
+		}
+	}
+}
 
-	archivos, err := obtenerArchivosEnDirectorio(directorio)
+func getFiles(c *fiber.Ctx) error {
+	directory := "/home/jefferson/Escritorio/SO"
+
+	files, err := obtenerArchivosEnDirectorio(directory)
 	if err != nil {
 		return err
 	}
 
-	var nombres []string
-	for _, archivo := range archivos {
-		nombres = append(nombres, archivo.Name())
+	var names []string
+	for _, file := range files {
+		names = append(names, file.Name())
 	}
 
 	return c.JSON(fiber.Map{
-		"files": nombres,
+		"files": names,
 	})
 }
 
-func obtenerArchivosEnDirectorio(directorio string) ([]os.FileInfo, error) {
-	entradas, err := os.ReadDir(directorio)
+func obtenerArchivosEnDirectorio(directory string) ([]os.FileInfo, error) {
+	entries, err := os.ReadDir(directory)
 	if err != nil {
 		return nil, err
 	}
 
-	var archivos []os.FileInfo
-	for _, entrada := range entradas {
-		info, err := entrada.Info()
+	var files []os.FileInfo
+	for _, entry := range entries {
+		info, err := entry.Info()
 		if err != nil {
 			return nil, err
 		}
-		archivos = append(archivos, info)
+		files = append(files, info)
 	}
 
-	return archivos, nil
+	return files, nil
+}
+
+func getMessages(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
+		"messages": Conversaciones,
+	})
 }
