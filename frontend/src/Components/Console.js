@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import "./Console.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -6,6 +6,7 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 const Console = () => {
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
+    const messagesEndRef = useRef(null);
 
     useEffect(() => {
         fetchMessages();
@@ -18,6 +19,14 @@ const Console = () => {
 
         return () => clearInterval(intervalId);
     }, []);
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [messages]);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); // Cambiado a "auto" para evitar la animación suave
+    };
 
     const fetchMessages = async () => {
         try {
@@ -69,6 +78,7 @@ const Console = () => {
                 {messages.map((conversation, index) => (
                     <><div key={index} className="message user-message">{conversation[0]}</div><div key={index} className="message bot-message">{conversation[1]}</div></>
                 ))}
+                <div ref={messagesEndRef} />
             </div>
             <div className="input-container">
                 <input
