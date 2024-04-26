@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "./Explorer.css";
-import icono from '../img/disco-duro.png'
+import icono from '../img/disco-duro1.png'
 
 const Explorer = () => {
     const [files, setFiles] = useState([]);
@@ -24,7 +24,7 @@ const Explorer = () => {
 
     return (
         <div className="explorer">
-            <h1>Explorador de archivos</h1>
+            <h2>Explorador de archivos</h2>
             <div className="file-grid">
                 {files.map((fileName, index) => (
                     <div className="file" key={index}>

@@ -375,6 +375,7 @@ func (f *Fdisk) createPartition() {
 	if err != nil {
 		if os.IsNotExist(err) {
 			f.printError(fmt.Sprintf("Error fdisk: No existe disco \"%s\" para particionar", f.Params["driveletter"]))
+			f.Result += fmt.Sprintf("Error fdisk: No existe disco \"%s\" para particionar", f.Params["driveletter"])
 			return
 		}
 	}
@@ -382,6 +383,7 @@ func (f *Fdisk) createPartition() {
 	size, _ := strconv.Atoi(f.Params["size"])
 	if size <= 0 {
 		f.printError("Error: El tamaño de partición debe ser mayor que cero")
+		f.Result += "Error: El tamaño de partición debe ser mayor que cero"
 		return
 	}
 	units := 1
@@ -393,11 +395,13 @@ func (f *Fdisk) createPartition() {
 		units = 1
 	} else {
 		f.printError("Eror fdisk: Unidad de Bytes incorrecta")
+		f.Result += "Eror fdisk: Unidad de Bytes incorrecta"
 		return
 	}
 	file, err := os.Open(absolutePath)
 	if err != nil {
 		f.printError("No se pudo abrir el archivo")
+		f.Result += "No se pudo abrir el archivo"
 		return
 	}
 	defer file.Close()
@@ -410,11 +414,13 @@ func (f *Fdisk) createPartition() {
 	if f.Params["type"] != "L" && f.thereAreFour(mbr.Partitions) {
 		baseName := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 		f.printError(fmt.Sprintf("Error fdisk: Ya existen 4 particiones en el disco %s.", baseName))
+		f.Result += fmt.Sprintf("Error fdisk: Ya existen 4 particiones en el disco %s.", baseName)
 		return
 	}
 	if f.thereIsNameR(f.Params["name"], mbr.Partitions) {
 		baseName := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 		f.printError(fmt.Sprintf("Error fdisk: Ya existe una partición con el nombre %s en el disco \"%s\".", f.Params["name"], baseName))
+		f.Result += fmt.Sprintf("Error fdisk: Ya existe una partición con el nombre %s en el disco \"%s\".", f.Params["name"], baseName)
 		return
 	}
 	if f.Params["type"] == "P" || f.Params["type"] == "E" {
@@ -441,6 +447,7 @@ func (f *Fdisk) createPartition() {
 			if f.Params["type"] == "E" && f.getExtended(mbr.Partitions) != -1 {
 				baseName := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 				f.printError(fmt.Sprintf("Error fdisk: Ya existe una partición extendida en el disco \"%s.\"", baseName))
+				f.Result += fmt.Sprintf("Error fdisk: Ya existe una partición extendida en el disco \"%s.\"", baseName)
 				return
 			}
 			for i := 0; i < len(mbr.Partitions); i++ {
@@ -483,9 +490,11 @@ func (f *Fdisk) createPartition() {
 			}
 			baseName := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 			f.printError(fmt.Sprintf("Error fdisk: No pueden crearse mas particiones en el disco \"%s\".", baseName))
+			f.Result += fmt.Sprintf("Error fdisk: No pueden crearse mas particiones en el disco \"%s\".", baseName)
 		} else {
 			baseName := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 			f.printError(fmt.Sprintf("Error fdisk: No hay espacio suficiente para la nueva partición en el disco \"%s\".", baseName))
+			f.Result += fmt.Sprintf("Error fdisk: No hay espacio suficiente para la nueva partición en el disco \"%s\".", baseName)
 		}
 	} else if f.Params["type"] == "L" {
 		i := f.getExtended(mbr.Partitions)
@@ -495,6 +504,7 @@ func (f *Fdisk) createPartition() {
 			if f.thereIsNameRL(f.Params["name"], listEbr.GetIterable()) {
 				baseName := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 				f.printError(fmt.Sprintf("Error fdisk: Ya existe una partición con el nombre %s en disco \"%s\".", f.Params["name"], baseName))
+				f.Result += fmt.Sprintf("Error fdisk: Ya existe una partición con el nombre %s en disco \"%s\".", f.Params["name"], baseName)
 				return
 			}
 			disponible := listEbr.SearchEmptySpace(size * units)
@@ -541,10 +551,12 @@ func (f *Fdisk) createPartition() {
 			}
 			baseName := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 			f.printError(fmt.Sprintf("Error fdisk: No hay espacio suficiente para la nueva partición en el disco \"%s\".", baseName))
+			f.Result += fmt.Sprintf("Error fdisk: No hay espacio suficiente para la nueva partición en el disco \"%s\".", baseName)
 			return
 		}
 		baseName := strings.TrimSuffix(filepath.Base(absolutePath), filepath.Ext(absolutePath))
 		f.printError(fmt.Sprintf("Error fdisk: No existe una partición extendida en el disco \"%s\" para crear la partición lógica..", baseName))
+		f.Result += fmt.Sprintf("Error fdisk: No existe una partición extendida en el disco \"%s\" para crear la partición lógica..", baseName)
 	}
 }
 
@@ -762,6 +774,7 @@ func (f *Fdisk) printSuccessCreate(diskname, name, partitionType string, size in
 		return ""
 	}()
 	fmt.Printf("\033[32m-> fdisk: Partición creada exitosamente en %s. %-9s (%s: %d %sB) [%d:%d]\033[0m\n", diskname, partitionType, name, size, unit, f.Line, f.Column)
+	f.Result += fmt.Sprintf("fdisk: Partición creada exitosamente en %s. %-9s (%s: %d %sB)\n", diskname, partitionType, name, size, unit)
 }
 
 func (f *Fdisk) GetFit() rune {
@@ -786,4 +799,4 @@ func (f *Fdisk) GetTypeP() rune {
 	return 'W'
 }
 
-func (f *Fdisk) GetResult() string { return "" }
+func (f *Fdisk) GetResult() string { return f.Result }
