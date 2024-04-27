@@ -44,6 +44,7 @@ func (f *Fdisk) Exec() {
 			f.deletePartition()
 		} else {
 			f.printError("Error fdisk: Faltan parámetros obligatorios para eliminar la partición.")
+			f.Result += "Error fdisk: Faltan parámetros obligatorios para eliminar la partición."
 		}
 		return
 	}
@@ -53,6 +54,7 @@ func (f *Fdisk) Exec() {
 			f.addSpacePartition()
 		} else {
 			f.printError("Error fdisk: Faltan parámetros obligatorios para agregar espacio a la partición.")
+			f.Result += "Error fdisk: Faltan parámetros obligatorios para agregar espacio a la partición."
 		}
 		return
 	}
@@ -61,6 +63,7 @@ func (f *Fdisk) Exec() {
 		f.createPartition()
 	} else {
 		f.printError("Error fdisk: Faltan parámetros obligatorios para crear la partición.")
+		f.Result += "Error fdisk: Faltan parámetros obligatorios para crear la partición."
 	}
 }
 
@@ -86,21 +89,23 @@ func (f *Fdisk) deletePartition() {
 			if mbr.Partitions[i].Type == 'E' {
 				listEBR = f.getListEBR(mbr.Partitions[i].Start, mbr.Partitions[i].Size, file)
 			}
-			for {
-				var confirm string
-				fmt.Printf("\033[33m-> Eliminar partición %s de disco %s (y/n): \033[0m", f.Params["name"], strings.Split(filepath.Base(absolutePath), ".")[0])
-				fmt.Scanln(&confirm)
-				if strings.ToLower(strings.TrimSpace(confirm)) == "y" {
-					break
-				} else if strings.ToLower(strings.TrimSpace(confirm)) == "n" {
-					return
-				}
-			}
+			// for {
+			// 	var confirm string
+			// 	fmt.Printf("\033[33m-> Eliminar partición %s de disco %s (y/n): \033[0m", f.Params["name"], strings.Split(filepath.Base(absolutePath), ".")[0])
+			// 	f.Result += fmt.Sprintf("\033[33m-> Eliminar partición %s de disco %s (y/n): \033[0m", f.Params["name"], strings.Split(filepath.Base(absolutePath), ".")[0])
+			// 	fmt.Scanln(&confirm)
+			// 	if strings.ToLower(strings.TrimSpace(confirm)) == "y" {
+			// 		break
+			// 	} else if strings.ToLower(strings.TrimSpace(confirm)) == "n" {
+			// 		return
+			// 	}
+			// }
 			mbr.Partitions = append(mbr.Partitions[:i], mbr.Partitions[i+1:]...)
 			mbr.Partitions = append(mbr.Partitions, &structs.Partition{})
 			disk, ok := env.Disks[f.Params["driveletter"]]
 			if !ok {
 				f.printError(fmt.Sprintf("Error fdisk: No existe el disco %v", f.Params["driveletter"]))
+				f.Result += fmt.Sprintf("Error fdisk: No existe el disco %v", f.Params["driveletter"])
 				return
 			}
 
@@ -156,20 +161,21 @@ func (f *Fdisk) deletePartition() {
 		iterEBR := listEBR.GetIterable()
 		for _, ebr := range iterEBR {
 			if !utils.CompareStrings(ebr.Name, "") && utils.CompareStrings(ebr.Name, f.Params["name"]) {
-				for {
-					fmt.Printf("\033[33m-> Eliminar partición %s de disco %s (y/n): \033[0m", f.Params["name"], filepath.Base(absolutePath))
-					var confirm string
-					fmt.Scanln(&confirm)
-					if strings.ToLower(strings.TrimSpace(confirm)) == "y" {
-						break
-					} else if strings.ToLower(strings.TrimSpace(confirm)) == "n" {
-						return
-					}
-				}
+				// for {
+				// 	fmt.Printf("\033[33m-> Eliminar partición %s de disco %s (y/n): \033[0m", f.Params["name"], filepath.Base(absolutePath))
+				// 	var confirm string
+				// 	fmt.Scanln(&confirm)
+				// 	if strings.ToLower(strings.TrimSpace(confirm)) == "y" {
+				// 		break
+				// 	} else if strings.ToLower(strings.TrimSpace(confirm)) == "n" {
+				// 		return
+				// 	}
+				// }
 				delEBR := listEBR.Delete(ebr.Name)
 				disk, ok := env.Disks[f.Params["driveletter"]]
 				if !ok {
 					f.printError(fmt.Sprintf("Error fdisk: No existe el disco %v", f.Params["driveletter"]))
+					f.Result += fmt.Sprintf("Error fdisk: No existe el disco %v", f.Params["driveletter"])
 					return
 				}
 
@@ -220,6 +226,7 @@ func (f *Fdisk) deletePartition() {
 		}
 	}
 	f.printError(fmt.Sprintf("Error fdisk: No existe la partición que se intentó eliminar en el disco \"%s\"", strings.Split(filepath.Base(absolutePath), ".")[0]))
+	f.Result += fmt.Sprintf("Error fdisk: No existe la partición que se intentó eliminar en el disco \"%s\"", strings.Split(filepath.Base(absolutePath), ".")[0])
 }
 
 func (f *Fdisk) addSpacePartition() {
@@ -229,6 +236,7 @@ func (f *Fdisk) addSpacePartition() {
 	if err != nil {
 		if os.IsNotExist(err) {
 			f.printError(fmt.Sprintf("Error fdisk: No existe disco \"%s\" para agregar espacio a la partición", strings.Split(filepath.Base(absolutePath), ".")[0]))
+			f.Result += fmt.Sprintf("Error fdisk: No existe disco \"%s\" para agregar espacio a la partición", strings.Split(filepath.Base(absolutePath), ".")[0])
 			return
 		}
 	}
@@ -241,6 +249,7 @@ func (f *Fdisk) addSpacePartition() {
 		units = 1
 	} else {
 		f.printError("Error fdisk: Unidad de Bytes Incorrecta")
+		f.Result += "Error fdisk: Unidad de Bytes Incorrecta"
 		return
 	}
 	file, err := os.Open(absolutePath)
@@ -265,11 +274,13 @@ func (f *Fdisk) addSpacePartition() {
 			if bytesAdd < 0 {
 				if math.Abs(float64(bytesAdd)) == float64(mbr.Partitions[i].Size) {
 					f.printError(fmt.Sprintf("Error fdisk: Intenta quitar todo el espacio del disponible en la partición %s.", baseName))
+					f.Result += fmt.Sprintf("Error fdisk: Intenta quitar todo el espacio del disponible en la partición %s.", baseName)
 					return
 				}
 				if math.Abs(float64(bytesAdd)) > float64(mbr.Partitions[i].Size) {
 					baseName := mbr.Partitions[i].Name
 					f.printError(fmt.Sprintf("Error fdisk: Intenta quitar más espacio del disponible en la partición %s.", baseName))
+					f.Result += fmt.Sprintf("Error fdisk: Intenta quitar más espacio del disponible en la partición %s.", baseName)
 					return
 				}
 				msg = "reducido"
@@ -279,11 +290,13 @@ func (f *Fdisk) addSpacePartition() {
 					if bytesAdd > mbr.Partitions[i+1].Start-mbr.Partitions[i].Size-mbr.Partitions[i].Start {
 						baseName := mbr.Partitions[i].Name
 						f.printError(fmt.Sprintf("Error fdisk: Intenta agregar más espacio del disponible después de la partición %s.", baseName))
+						f.Result += fmt.Sprintf("Error fdisk: Intenta agregar más espacio del disponible después de la partición %s.", baseName)
 						return
 					}
 				} else if bytesAdd > mbr.Size-mbr.Partitions[i].Size-mbr.Partitions[i].Start {
 					baseName := mbr.Partitions[i].Name
 					f.printError(fmt.Sprintf("Error fdisk: Intenta agregar más espacio del disponible después de la partición %s.", baseName))
+					f.Result += fmt.Sprintf("Error fdisk: Intenta agregar más espacio del disponible después de la partición %s.", baseName)
 					return
 				}
 				msg = "aumentado"
@@ -320,10 +333,12 @@ func (f *Fdisk) addSpacePartition() {
 				if bytesAdd < 0 {
 					if math.Abs(float64(bytesAdd)) == float64(ebr.Size) {
 						f.printError(fmt.Sprintf("Error fdisk: Intenta quitar todo el espacio del disponible en la partición \"%s\"", strings.TrimSpace(ebr.Name)))
+						f.Result += fmt.Sprintf("Error fdisk: Intenta quitar todo el espacio del disponible en la partición \"%s\"", strings.TrimSpace(ebr.Name))
 						return
 					}
 					if math.Abs(float64(bytesAdd)) > float64(ebr.Size) {
 						f.printError(fmt.Sprintf("Error fdisk: IIntenta quitar más espacio del disponible en la partición \"%s\"", strings.TrimSpace(ebr.Name)))
+						f.Result += fmt.Sprintf("Error fdisk: IIntenta quitar más espacio del disponible en la partición \"%s\"", strings.TrimSpace(ebr.Name))
 						return
 					}
 					msg = "reducido"
@@ -331,9 +346,11 @@ func (f *Fdisk) addSpacePartition() {
 				} else if bytesAdd > 0 {
 					if ebr.Next != -1 {
 						f.printError(fmt.Sprintf("Error fdisk: Intenta agregar más espacio del disponible después de la partición \"%s\"", strings.TrimSpace(ebr.Name)))
+						f.Result += fmt.Sprintf("Error fdisk: Intenta agregar más espacio del disponible después de la partición \"%s\"", strings.TrimSpace(ebr.Name))
 						return
 					} else {
 						f.printError(fmt.Sprintf("Error fdisk: Intenta agregar más espacio del disponible después de la partición \"%s\"", strings.TrimSpace(ebr.Name)))
+						f.Result += fmt.Sprintf("Error fdisk: Intenta agregar más espacio del disponible después de la partición \"%s\"", strings.TrimSpace(ebr.Name))
 						return
 					}
 					msg = "aumentado"
@@ -364,6 +381,7 @@ func (f *Fdisk) addSpacePartition() {
 	baseName := filepath.Base(absolutePath)
 	fileName := baseName[:len(baseName)-len(filepath.Ext(baseName))]
 	f.printError(fmt.Sprintf(" Error fdisk: No existe la partición en %s a la que se intentó agregar o quitar espacio", fileName))
+	f.Result += fmt.Sprintf(" Error fdisk: No existe la partición en %s a la que se intentó agregar o quitar espacio", fileName)
 }
 
 func (f *Fdisk) createPartition() {
@@ -732,6 +750,7 @@ func (f *Fdisk) printError(text string) {
 
 func (f *Fdisk) printSuccessDelete(text string) {
 	fmt.Printf("\033[32m-> %s [%v:%v]\033[0m\n", text, f.Line, f.Column+1)
+	f.Result += fmt.Sprintf("%s\n", text)
 }
 
 func (f *Fdisk) printSuccessAdd(text, name, sign string, size int, unit, partitionType string) {
@@ -753,6 +772,7 @@ func (f *Fdisk) printSuccessAdd(text, name, sign string, size int, unit, partiti
 		return ""
 	}()
 	fmt.Printf("\033[32m-> %s %s (%s %s%d %sB) [%d:%d]\033[0m\n", text, partitionType, name, sign, size, unit, f.Line, f.Column)
+	f.Result += fmt.Sprintf("%s %s (%s %s%d %sB)\n", text, partitionType, name, sign, size, unit)
 }
 
 func (f *Fdisk) printSuccessCreate(diskname, name, partitionType string, size int, unit string) {
