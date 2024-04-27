@@ -4,7 +4,7 @@ import "./Reports.css";
 const Reports = () => {
     return (
         <div className="reports">
-            <h1>Reportes</h1>
+            <h2>Reportes</h2>
             <p>No se que poner, pero aquí van los reportes</p>
         </div>
     );
