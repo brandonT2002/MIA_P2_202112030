@@ -25,6 +25,10 @@
     align-items: center; /* Centra los elementos horizontalmente */
 }
 
+img {
+    cursor: pointer;
+}
+
 .file img {
     width: 60%; /* Ajusta el ancho del icono */
     height: auto; /* Mantén la proporción de aspecto */
@@ -32,4 +36,27 @@
 
 .file p {
     margin-top: 1rem; /* Espacio entre el icono y el texto */
+}
+
+/* ========== */
+.partitions-header {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.back-button:focus {
+    outline: none;
+}
+
+.back-button .svg-inline--fa {
+    font-size: 2.5rem;
+    color: rgb(255, 255, 255); /* Color de la flecha */
 }
