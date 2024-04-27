@@ -32,15 +32,14 @@ func (c *CallParser) ExecutionParser(input string) string {
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("\033[31m-> Ha ocurrido un error en la línea de comandos.\033[0m")
-				Action += fmt.Sprintf("Ha ocurrido un error en la línea de comandos.")
+				Action += fmt.Sprintf("Error: Ha ocurrido un error en la línea de comandos.")
 			}
 		}()
 	}()
 
 	for _, fail := range parserErrors.Errors {
 		fmt.Printf("\033[31m-> %s. [%v:%v]\033[0m\n", fail.Msg, fail.Line, fail.Column+1)
-		// Action += fmt.Sprintf("\033[31m%s. [%v:%v]\033[0m\n", fail.Msg, fail.Line, fail.Column+1)
-		Action += fmt.Sprintf("%s.\n", "Comando no reconocido")
+		Action += fmt.Sprintf("Error: %s.\n", "Comando no reconocido")
 	}
 
 	for _, cmd := range listener.Execute {
