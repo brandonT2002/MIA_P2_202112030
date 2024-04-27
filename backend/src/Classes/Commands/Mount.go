@@ -43,6 +43,7 @@ func (m *Mount) Exec() {
 		return
 	} else {
 		m.printError("Error mount: Faltan parámetros obligatorios para montar la partición")
+		m.Result += "Error mount: Faltan parámetros obligatorios para montar la partición"
 	}
 }
 
@@ -51,6 +52,7 @@ func (m *Mount) mount() {
 	absolutePath, _ := filepath.Abs(env.GetPath(m.Params["driveletter"]))
 	if _, err := os.Stat(absolutePath); os.IsNotExist(err) {
 		m.printError(fmt.Sprintf("Error mount: No existe el disco %s para montar la partición", m.Params["driveletter"]))
+		m.Result += fmt.Sprintf("Error mount: No existe el disco %s para montar la partición", m.Params["driveletter"])
 		return
 	}
 	file, err := os.OpenFile(absolutePath, os.O_RDONLY, 0644)
@@ -181,20 +183,25 @@ func (m *Mount) validateEmptyParams() bool {
 func (m *Mount) viewMounteds() {
 	if len(env.Disks) > 0 {
 		fmt.Println("\033[33m -> mount: \033[0m")
+		m.Result += "mount: "
 		fmt.Println("\033[33m\t -> Particiones Montadas\033[0m")
+		m.Result += "Particiones Montadas"
 		for diskName, diskInfo := range env.Disks {
 			for id, value := range diskInfo.Ids {
 				fmt.Printf("\033[33m\t -> %-20s %-20s %-20s\033[0m\n", id, value.Name, diskName)
+				m.Result += fmt.Sprintf("%-20s %-20s %-20s\n", id, value.Name, diskName)
 			}
 		}
 		println()
 	} else {
 		fmt.Println("\033[33m -> mount: No hay particiones montadas: \033[0m")
+		m.Result += "mount: No hay particiones montadas: "
 	}
 }
 
 func (m *Mount) printError(text string) {
 	fmt.Printf("\033[31m-> %s. [%v:%v]\033[0m\n", text, m.Line, m.Column+1)
+	m.Result += fmt.Sprintf("%s.\n", text)
 }
 
 func (m *Mount) printSuccess(diskName, name, newID, type_ string) {
@@ -206,6 +213,7 @@ func (m *Mount) printSuccess(diskName, name, newID, type_ string) {
 		type_ = "LOGICA "
 	}
 	fmt.Printf("\033[32m-> mount: Partición montada exitosamente en %s. %s (%s: %s) [%d:%d]\033[0m\n", diskName, type_, name, newID, m.Line, m.Column)
+	m.Result += fmt.Sprintf("mount: Partición montada exitosamente en %s. %s (%s: %s)", diskName, type_, name, newID)
 }
 
-func (m *Mount) GetResult() string { return "" }
+func (m *Mount) GetResult() string { return m.Result }
