@@ -32,7 +32,7 @@ func (c *CallParser) ExecutionParser(input string) string {
 		defer func() {
 			if r := recover(); r != nil {
 				fmt.Println("\033[31m-> Ha ocurrido un error en la línea de comandos.\033[0m")
-				Action += fmt.Sprintf("Error: Ha ocurrido un error en la línea de comandos.")
+				Action += "Error: Ha ocurrido un error en la línea de comandos."
 			}
 		}()
 	}()
