@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import icono from '../img/Particion.png';
 
-const Partitions = ({ onShowExplorer }) => {
+const Partitions = ({ onShowExplorer, partitions }) => {
     return (
         <div className="explorer">
             <div className="partitions-header">
@@ -14,10 +14,12 @@ const Partitions = ({ onShowExplorer }) => {
                 <h2>Particiones</h2>
             </div>
             <div className="file-grid">
-                <div className="file">
-                    <img src={icono} alt="Icono de particion" />
-                    <p>Particion1</p>
-                </div>
+                {partitions.map((partition, index) => (
+                    <div className="file" key={index}>
+                        <img src={icono} alt="Icono de particion" title={partition[0]}/>
+                        <p>{partition[1]}</p>
+                    </div>
+                ))}
             </div>
         </div>
     );

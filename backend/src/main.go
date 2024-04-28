@@ -5,6 +5,7 @@ import (
 	"os"
 
 	callparser "mia/CallParser"
+	env "mia/Classes/Env"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -14,9 +15,14 @@ type Console struct {
 	Code string `json:"code"`
 }
 
+type PartitionForm struct {
+	DiskName string `json:"disk"`
+}
+
 var (
 	Call           *callparser.CallParser
 	Conversaciones [][]string
+	Partitions     [][]string
 )
 
 func main() {
@@ -35,6 +41,7 @@ func main() {
 	app.Post("/interpreter", parser)
 	app.Get("/files", getFiles)
 	app.Get("/messages", getMessages)
+	app.Post("/partitions", getPartitions)
 
 	app.Listen(":8080")
 }
@@ -103,4 +110,28 @@ func getMessages(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"messages": Conversaciones,
 	})
+}
+
+func getPartitions(c *fiber.Ctx) error {
+	var partForm PartitionForm
+	if err := c.BodyParser(&partForm); err != nil {
+		return err
+	}
+
+	partitions(partForm.DiskName)
+	_Partitions := Partitions
+	Partitions = [][]string{}
+
+	return c.JSON(fiber.Map{
+		"partitions": _Partitions,
+	})
+}
+
+func partitions(diskName string) {
+	if disk, ok := env.Disks[diskName]; ok {
+		for id, name := range disk.Ids {
+			partition := []string{id, name.Name}
+			Partitions = append(Partitions, partition)
+		}
+	}
 }

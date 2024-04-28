@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import "./Explorer.css";
 import icono from '../img/disco-duro1.png';
-import Partitions from './Partitions'; // Importa el componente Partitions desde su archivo
+import Partitions from './Partitions';
 
 const Explorer = () => {
     const [files, setFiles] = useState([]);
     const [showPartitions, setShowPartitions] = useState(false);
     const [selectedDisk, setSelectedDisk] = useState(null);
-    const [explorerVisible, setExplorerVisible] = useState(true); // Nuevo estado para controlar la visibilidad de Explorer
+    const [explorerVisible, setExplorerVisible] = useState(true);
+    const [partitions, setPartitions] = useState([]); // Define la variable partitions en el estado
 
     useEffect(() => {
         fetchFiles();
@@ -20,21 +21,38 @@ const Explorer = () => {
                 throw new Error('Network response was not ok');
             }
             const data = await response.json();
-            setFiles(data.files || []); // Si data.files es null, se establece un arreglo vacío
+            setFiles(data.files || []);
         } catch (error) {
             console.error('There was a problem with the fetch operation:', error);
         }
     };
 
-    const handleDiskClick = (disk) => {
-        setSelectedDisk(disk);
+    const handleDiskClick = async (diskName) => {
+        setSelectedDisk(diskName);
         setShowPartitions(true);
-        setExplorerVisible(false); // Oculta Explorer cuando se muestra Partitions
+        setExplorerVisible(false);
+
+        try {
+            const response = await fetch('http://localhost:8080/partitions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ disk: diskName.split('.')[0] })
+            });
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data = await response.json();
+            setPartitions(data.partitions); // Guarda las particiones en el estado
+        } catch (error) {
+            console.error('There was a problem with the fetch operation:', error);
+        }
     };
 
     const handleShowExplorer = () => {
-        setExplorerVisible(true); // Muestra Explorer cuando se hace clic en "Mostrar Explorer"
-        setShowPartitions(false); // Oculta Partitions
+        setExplorerVisible(true);
+        setShowPartitions(false);
     };
 
     return (
@@ -46,13 +64,13 @@ const Explorer = () => {
                         {files.map((fileName, index) => (
                             <div className="file" key={index}>
                                 <img src={icono} alt="Icono de disco" onClick={() => handleDiskClick(fileName)}/>
-                                <p>{fileName}</p>
+                                <p data-disk={fileName}>{fileName}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             )}
-            {showPartitions && <Partitions onShowExplorer={handleShowExplorer} />}
+            {showPartitions && <Partitions onShowExplorer={handleShowExplorer} partitions={partitions} />} {/* Pasa partitions como propiedad */}
         </div>
     );
 };
