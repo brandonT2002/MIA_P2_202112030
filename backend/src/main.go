@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 
 	callparser "mia/CallParser"
 	env "mia/Classes/Env"
@@ -80,7 +81,10 @@ func getFiles(c *fiber.Ctx) error {
 
 	var names []string
 	for _, file := range files {
-		names = append(names, file.Name())
+		// Verificar si el archivo tiene la extensión ".djs"
+		if filepath.Ext(file.Name()) == ".dsk" {
+			names = append(names, file.Name())
+		}
 	}
 
 	return c.JSON(fiber.Map{
