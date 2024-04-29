@@ -41,6 +41,7 @@
     height: auto;
     word-wrap: break-word;
     font-size: 13px;
+    margin: .6rem 0;
 }
 
 .user-message {

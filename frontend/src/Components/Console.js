@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "./Console.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 const Console = () => {
     const [messages, setMessages] = useState([]);
@@ -12,14 +10,6 @@ const Console = () => {
 
     useEffect(() => {
         fetchMessages();
-    }, []);
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            fetchMessages();
-        }, 5000);
-
-        return () => clearInterval(intervalId);
     }, []);
 
     useEffect(() => {
