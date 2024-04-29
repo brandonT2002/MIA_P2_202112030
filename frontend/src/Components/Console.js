@@ -6,6 +6,8 @@ import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 const Console = () => {
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
+    const [textareaRows, setTextareaRows] = useState(1);
+    const textareaRef = useRef(null);
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
@@ -24,8 +26,12 @@ const Console = () => {
         scrollToBottom();
     }, [messages]);
 
+    useEffect(() => {
+        adjustTextareaHeight();
+    }, [inputValue]);
+
     const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "auto" }); // Cambiado a "auto" para evitar la animación suave
+        messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
     };
 
     const fetchMessages = async () => {
@@ -63,8 +69,12 @@ const Console = () => {
     };
 
     const handleKeyPress = async (event) => {
-        if (event.key === 'Enter') {
-            const message = event.target.value.trim();
+        if (event.key === 'Enter' && event.shiftKey) {
+            event.preventDefault();
+            setInputValue(prev => prev + '\n');
+        } else if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            const message = inputValue.trim();
             if (message !== '') {
                 setInputValue('');
                 await sendMessageToBot(message);
@@ -72,29 +82,48 @@ const Console = () => {
         }
     };
 
+    const adjustTextareaHeight = () => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            const rows = textarea.value.split('\n').length;
+            setTextareaRows(rows < 7 ? rows : 7);
+        }
+    };
+
     return (
         <div className="console">
             <div className="messages">
                 {messages.map((conversation, index) => (
-                    <><div key={index} className="message user-message">{conversation[0]}</div><div key={index} className="message bot-message">{conversation[1]}</div></>
+                    <div key={index} className="message-container">
+                        <div className="message user-message">
+                            {conversation[0].split('\n').map((line, i) => (
+                                <React.Fragment key={i}>
+                                    {line}
+                                    {i < conversation[0].split('\n').length - 1 && <br />}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                        <div className="message bot-message">
+                            {conversation[1].split('\n').map((line, i) => (
+                                <React.Fragment key={i}>
+                                    {line}
+                                    {i < conversation[1].split('\n').length - 1 && <br />}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </div>
                 ))}
                 <div ref={messagesEndRef} />
             </div>
             <div className="input-container">
-                <input
-                    type="text"
+                <textarea
+                    ref={textareaRef}
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     onKeyDown={handleKeyPress}
                     placeholder="Escribe un mensaje..."
+                    rows={textareaRows}
                 />
-                <FontAwesomeIcon icon={faPaperPlane} className="icon" onClick={async () => {
-                    const message = inputValue.trim();
-                    if (message !== '') {
-                        setInputValue('');
-                        await sendMessageToBot(message);
-                    }
-                }} />
             </div>
         </div>
     );

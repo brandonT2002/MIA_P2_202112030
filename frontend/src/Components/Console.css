@@ -17,7 +17,6 @@
     height: 100vh;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
 }
 
 .messages::-webkit-scrollbar {
@@ -25,17 +24,18 @@
 }
 
 .messages::-webkit-scrollbar-thumb {
-    background-color: rgb(47, 50, 63, 0.8); /* Color del thumb (barra móvil) */
-    border-radius: 5px; /* Borde redondeado del thumb */
+    background-color: rgba(225, 225, 225, 0.313);
+    border-radius: 5px;
+}
+
+.message-container {
+    display: flex;
+    flex-direction: column;
 }
 
 .message {
-    display: flex;
-    align-items: center;
-    flex-direction: row;
     color: #fff;
     padding: 1.2rem;
-    margin-bottom: .8rem;
     border-radius: .6rem;
     max-width: 60%;
     height: auto;
@@ -57,32 +57,38 @@
 .input-container {
     position: relative;
     display: flex;
-    margin-top: 20px;
+    margin-top: 10px;
     color: #fff;
 }
 
-.input-container input {
+.input-container textarea {
     flex: 1;
-    height: 4rem;
-    padding: 10px 40px 10px 10px; /* Aumenta el padding derecho para dejar espacio para el icono */
+    min-height: 5rem; /* Ajustar según sea necesario */
+    padding: 20px; /* Misma configuración que el padding del placeholder */
     border-radius: 5px;
     background-color: rgb(47, 50, 63);
     color: #fff;
     font-size: 15.5px;
     border: none;
     outline: none;
+    resize: none;
+    line-height: 1.5; /* Ajustar la altura de la línea para centrar mejor el texto */
 }
 
-.input-container input::placeholder {
-    color: #fff;
+.input-container textarea::placeholder {
+    color: #ffffff6f;
+    text-align: left; /* Mantener el texto a la izquierda */
+    display: flex;
+    align-items: center; /* Centrar verticalmente */
 }
 
-.input-container .icon {
-    position: absolute;
-    height: 1.7rem;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #fff;
+
+
+.input-container textarea::-webkit-scrollbar {
+    width: .8rem; /* Ancho del scrollbar */
+}
+
+.input-container textarea::-webkit-scrollbar-thumb {
+    background-color: rgba(225, 225, 225, 0.313);
+    border-radius: 5px;
 }
