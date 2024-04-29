@@ -68,7 +68,7 @@ func (m *Mkfile) Exec() {
 							}
 							content = content[:size]
 						} else {
-							m.printError(fmt.Sprintf("-> Error mkfile: No se creó el archivo '%v', el atributo size debe ser un número positivo.", m.Params["path"]))
+							m.printError(fmt.Sprintf("Error mkfile: No se creó el archivo '%v', el atributo size debe ser un número positivo.", m.Params["path"]))
 							return
 						}
 					} else if contExist {
@@ -83,7 +83,7 @@ func (m *Mkfile) Exec() {
 					}
 					var disk = env.Disks[*env.CurrentLogged.Driveletter]
 					if m.isIn(m.Params["path"], disk.Ids[*env.CurrentLogged.IDPart].Mkdirs) {
-						m.printError(fmt.Sprintf("-> Error mkdir: No se creó la carpeta '%v' porque ya existe.", m.Params["path"]))
+						m.printError(fmt.Sprintf("Error mkdir: No se creó la carpeta '%v' porque ya existe.", m.Params["path"]))
 						return
 					}
 					_, err = file.Seek(int64(p.Start), 0)
@@ -126,7 +126,7 @@ func (m *Mkfile) Exec() {
 								tmpDir = append(tmpDir, dir[i])
 							}
 							if !tree.SearchDir("/"+strings.Join(tmpDir, "/")) && len(dir) > 1 {
-								m.printError(fmt.Sprintf("-> Error mkdir: No se creó la carpeta '%v', no existe la ruta donde intentó crearse.", m.Params["path"]))
+								m.printError(fmt.Sprintf("Error mkdir: No se creó la carpeta '%v', no existe la ruta donde intentó crearse.", m.Params["path"]))
 							}
 						}
 						tree.Mkfile(m.Params["path"], env.GetPath(*env.CurrentLogged.Driveletter))
@@ -166,14 +166,14 @@ func (m *Mkfile) Exec() {
 					}
 					tree.WriteInDisk(env.GetPath(*env.CurrentLogged.Driveletter), int32(p.Start), superBlock.Encode())
 					disk.Ids[*env.CurrentLogged.IDPart].Mkdirs = append(disk.Ids[*env.CurrentLogged.IDPart].Mkdirs, m.Params["path"])
-					m.printSuccess(fmt.Sprintf("-> mkfile: Nueva carpeta creada exitosamente '%v'", m.Params["path"]))
+					m.printSuccess(fmt.Sprintf("mkfile: Nueva carpeta creada exitosamente '%v'", m.Params["path"]))
 				}
 			}
 		} else {
-			m.printError("-> Error mkfile: Faltan parámetros obligatorios para crear un directorio.")
+			m.printError("Error mkfile: Faltan parámetros obligatorios para crear un directorio.")
 		}
 	} else {
-		m.printError("-> Error mkfile: No hay ningún usuario loggeado actualmente.")
+		m.printError("Error mkfile: No hay ningún usuario loggeado actualmente.")
 	}
 }
 

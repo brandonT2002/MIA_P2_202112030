@@ -56,7 +56,7 @@ func (m *Mkdir) Exec() {
 				if p.Size != 0 && utils.CompareStrings(p.Name, *env.CurrentLogged.Partition) {
 					var disk = env.Disks[*env.CurrentLogged.Driveletter]
 					if m.isIn(m.Params["path"], disk.Ids[*env.CurrentLogged.IDPart].Mkdirs) {
-						m.printError(fmt.Sprintf("-> Error mkdir: No se creó la carpeta '%v' porque ya existe.", m.Params["path"]))
+						m.printError(fmt.Sprintf("Error mkdir: No se creó la carpeta '%v' porque ya existe.", m.Params["path"]))
 						return
 					}
 					_, err = file.Seek(int64(p.Start), 0)
@@ -98,7 +98,7 @@ func (m *Mkdir) Exec() {
 								tmpDir = append(tmpDir, dir[i])
 							}
 							if !tree.SearchDir("/"+strings.Join(tmpDir, "/")) && len(dir) > 1 {
-								m.printError(fmt.Sprintf("-> Error mkdir: No se creó la carpeta '%v', no existe la ruta donde intentó crearse.", m.Params["path"]))
+								m.printError(fmt.Sprintf("Error mkdir: No se creó la carpeta '%v', no existe la ruta donde intentó crearse.", m.Params["path"]))
 							}
 						}
 						tree.Mkdir(m.Params["path"], env.GetPath(*env.CurrentLogged.Driveletter))
@@ -135,14 +135,14 @@ func (m *Mkdir) Exec() {
 					}
 					tree.WriteInDisk(env.GetPath(*env.CurrentLogged.Driveletter), int32(p.Start), superBlock.Encode())
 					disk.Ids[*env.CurrentLogged.IDPart].Mkdirs = append(disk.Ids[*env.CurrentLogged.IDPart].Mkdirs, m.Params["path"])
-					m.printSuccess(fmt.Sprintf("-> mkdir: Nueva carpeta creada exitosamente '%v'", m.Params["path"]))
+					m.printSuccess(fmt.Sprintf("mkdir: Nueva carpeta creada exitosamente '%v'", m.Params["path"]))
 				}
 			}
 		} else {
-			m.printError("-> Error mkdir: Faltan parámetros obligatorios para crear un directorio.")
+			m.printError("Error mkdir: Faltan parámetros obligatorios para crear un directorio.")
 		}
 	} else {
-		m.printError("-> Error mkdir: No hay ningún usuario loggeado actualmente.")
+		m.printError("Error mkdir: No hay ningún usuario loggeado actualmente.")
 	}
 }
 
@@ -164,11 +164,12 @@ func (m *Mkdir) validateParams() bool {
 }
 
 func (m *Mkdir) printError(text string) {
-	fmt.Printf("\033[31m%v [%v:%v]\033[0m\n", text, m.Line, m.Column)
+	fmt.Printf("\033[31m-> %v [%v:%v]\033[0m\n", text, m.Line, m.Column)
+	m.Result += fmt.Sprintf("%v.\n", text)
 }
 
 func (m *Mkdir) printSuccess(text string) {
-	fmt.Printf("\033[32m%v [%v:%v]\033[0m\n", text, m.Line, m.Column)
+	fmt.Printf("\033[32m-> %v [%v:%v]\033[0m\n", text, m.Line, m.Column)
 	m.Result += fmt.Sprintf("%v.\n", text)
 }
 

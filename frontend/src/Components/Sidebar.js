@@ -18,10 +18,6 @@ const Sidebar = ({ onOptionSelect }) => {
                     <FontAwesomeIcon icon={faFolderOpen} className="sidebar-icon" />
                     Explorador
                 </li>
-                <li onClick={() => onOptionSelect('Reportes')}>
-                    <FontAwesomeIcon icon={faChartBar} className="sidebar-icon" />
-                    Reportes
-                </li>
             </ul>
         </div>
     );

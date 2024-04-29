@@ -54,6 +54,10 @@
     align-self: flex-start;
 }
 
+.bot-message-error {
+    background-color: rgb(210, 110, 112);
+    align-self: flex-start;
+}
 
 .input-container {
     position: relative;
@@ -92,4 +96,19 @@
 .input-container textarea::-webkit-scrollbar-thumb {
     background-color: rgba(225, 225, 225, 0.313);
     border-radius: 5px;
+}
+
+.chart-row-1 {
+    display: grid;
+    grid-template-rows: repeat(1, 1fr);
+    column-gap: 0px;
+}
+
+.chart-container-tree {
+    text-align: center;
+}
+
+.bot-message-graph {
+    width: 50rem;
+    height: 50rem;
 }

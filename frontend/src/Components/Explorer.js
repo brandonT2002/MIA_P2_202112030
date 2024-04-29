@@ -16,7 +16,7 @@ const Explorer = () => {
 
     const fetchFiles = async () => {
         try {
-            const response = await fetch('http://localhost:8080/files');
+            const response = await fetch('http://3.147.86.56:8080/files');
             if (!response.ok) {
                 throw new Error('Network response was not ok');
             }
@@ -29,11 +29,12 @@ const Explorer = () => {
 
     const handleDiskClick = async (diskName) => {
         setSelectedDisk(diskName);
+        console.log(selectedDisk)
         setShowPartitions(true);
         setExplorerVisible(false);
 
         try {
-            const response = await fetch('http://localhost:8080/partitions', {
+            const response = await fetch('http://3.147.86.56:8080/partitions', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
