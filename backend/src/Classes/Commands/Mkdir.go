@@ -169,6 +169,7 @@ func (m *Mkdir) printError(text string) {
 
 func (m *Mkdir) printSuccess(text string) {
 	fmt.Printf("\033[32m%v [%v:%v]\033[0m\n", text, m.Line, m.Column)
+	m.Result += fmt.Sprintf("%v.\n", text)
 }
 
-func (m *Mkdir) GetResult() string { return "" }
+func (m *Mkdir) GetResult() string { return m.Result }

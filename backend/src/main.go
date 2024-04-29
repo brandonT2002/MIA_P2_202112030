@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -42,6 +43,7 @@ func main() {
 	app.Post("/interpreter", parser)
 	app.Get("/files", getFiles)
 	app.Get("/messages", getMessages)
+	app.Get("/files/:filename", getFile)
 	app.Post("/partitions", getPartitions)
 
 	app.Listen(":8080")
@@ -81,7 +83,6 @@ func getFiles(c *fiber.Ctx) error {
 
 	var names []string
 	for _, file := range files {
-		// Verificar si el archivo tiene la extensión ".djs"
 		if filepath.Ext(file.Name()) == ".dsk" {
 			names = append(names, file.Name())
 		}
@@ -138,4 +139,14 @@ func partitions(diskName string) {
 			Partitions = append(Partitions, partition)
 		}
 	}
+}
+
+func getFile(c *fiber.Ctx) error {
+	filename := c.Params("filename")
+	fileContet, err := ioutil.ReadFile(filepath.Join("/home/jefferson/Escritorio/SO/Reportes", filename))
+	if err != nil {
+		return err
+	}
+
+	return c.Send(fileContet)
 }

@@ -39,7 +39,7 @@ func (l *Login) Exec() {
 	if l.validateParams() {
 		l.login()
 	} else {
-		l.printError("-> Error login: Faltan parámetros obligatorios para iniciar sesión.")
+		l.printError("Error login: Faltan parámetros obligatorios para iniciar sesión.")
 	}
 }
 
@@ -118,24 +118,24 @@ func (l *Login) login() {
 										}
 									}
 								}
-								l.printSuccess(fmt.Sprintf("-> login: Sesión iniciada exitosamente. (%v)", user.Name))
+								l.printSuccess(fmt.Sprintf("login: Sesión iniciada exitosamente. (%v)", user.Name))
 							} else {
-								l.printError(fmt.Sprintf("-> Error login: El usuario %v no existe en el sistema.", l.Params["user"]))
+								l.printError(fmt.Sprintf("Error login: El usuario %v no existe en el sistema.", l.Params["user"]))
 							}
 							return
 						}
-						l.printError("-> Error login: No existe el archivo /users.txt.")
+						l.printError("Error login: No existe el archivo /users.txt.")
 						return
 					}
 				}
 			} else {
-				l.printError(fmt.Sprintf("-> Error login: No existe el código de partición %v en el disco %v para iniciar sesión.", l.Params["id"], driveletter))
+				l.printError(fmt.Sprintf("Error login: No existe el código de partición %v en el disco %v para iniciar sesión.", l.Params["id"], driveletter))
 			}
 		} else {
-			l.printError(fmt.Sprintf("-> Error login: No existe el disco %v.", driveletter))
+			l.printError(fmt.Sprintf("Error login: No existe el disco %v.", driveletter))
 		}
 	} else {
-		l.printError("-> Error login: Hay un usuario loggeado actualmente.")
+		l.printError("Error login: Hay un usuario loggeado actualmente.")
 	}
 }
 
@@ -178,11 +178,13 @@ func (l *Login) validateParams() bool {
 }
 
 func (l *Login) printError(text string) {
-	fmt.Printf("\033[31m%s [%d:%d]\033[0m\n", text, l.Line, l.Column)
+	fmt.Printf("\033[31m -> %s [%d:%d]\033[0m\n", text, l.Line, l.Column)
+	l.Result += fmt.Sprintf("%s.\n", text)
 }
 
 func (l *Login) printSuccess(text string) {
-	fmt.Printf("\033[32m%s [%d:%d]\033[0m\n", text, l.Line, l.Column)
+	fmt.Printf("\033[32m -> %s [%d:%d]\033[0m\n", text, l.Line, l.Column)
+	l.Result += fmt.Sprintf("%s.\n", text)
 }
 
-func (l *Login) GetResult() string { return "" }
+func (l *Login) GetResult() string { return l.Result }

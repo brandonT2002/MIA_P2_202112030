@@ -195,11 +195,13 @@ func (m *Mkfile) validateParams() bool {
 }
 
 func (m *Mkfile) printError(text string) {
-	fmt.Printf("\033[31m%v [%v:%v]\033[0m\n", text, m.Line, m.Column)
+	fmt.Printf("\033[31m-> %v [%v:%v]\033[0m\n", text, m.Line, m.Column)
+	m.Result += fmt.Sprintf("%v.\n", text)
 }
 
 func (m *Mkfile) printSuccess(text string) {
-	fmt.Printf("\033[32m%v [%v:%v]\033[0m\n", text, m.Line, m.Column)
+	fmt.Printf("\033[32m-> %v [%v:%v]\033[0m\n", text, m.Line, m.Column)
+	m.Result += fmt.Sprintf("%v.\n", text)
 }
 
-func (m *Mkfile) GetResult() string { return "" }
+func (m *Mkfile) GetResult() string { return m.Result }

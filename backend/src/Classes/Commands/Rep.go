@@ -3,6 +3,7 @@ package commands
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"math"
 	env "mia/Classes/Env"
 	structs "mia/Classes/Structs"
@@ -43,7 +44,7 @@ func (r *Rep) Exec() {
 	_, idExists := r.Params["id"]
 
 	if !nameExists || !pathExists || !idExists {
-		r.printError("-> Error rep: Faltan parámetros obligatorios para generar el reporte")
+		r.printError("Error rep: Faltan parámetros obligatorios para generar el reporte")
 		return
 	}
 	r.Params["path"] = strings.ReplaceAll(path, "\"", "")
@@ -70,7 +71,7 @@ func (r *Rep) Exec() {
 	default:
 		_, rutaExists := r.Params["ruta"]
 		if !rutaExists {
-			r.printError("-> Error rep: Faltan parámetros obligatorios para generar el reporte")
+			r.printError("Error rep: Faltan parámetros obligatorios para generar el reporte")
 			return
 		}
 		switch strings.ToLower(name) {
@@ -79,7 +80,7 @@ func (r *Rep) Exec() {
 		case "ls":
 			r.reportLs()
 		default:
-			r.printError("-> Nombre de reporte desconocido")
+			r.printError("Nombre de reporte desconocido")
 		}
 	}
 }
@@ -92,7 +93,7 @@ func (r *Rep) reportMBR() {
 		file, err := os.Open(absolutePath)
 		if err != nil {
 			if os.IsNotExist(err) {
-				r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+				r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 				return
 			}
 			fmt.Println("Error al abrir el archivo:", err)
@@ -144,7 +145,7 @@ func (r *Rep) reportMBR() {
 		dot += "\n}"
 		r.generateFile(dot, driveletter)
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 	}
 }
 
@@ -156,7 +157,7 @@ func (r *Rep) reportDisk() {
 		file, err := os.Open(absolutePath)
 		if err != nil {
 			if os.IsNotExist(err) {
-				r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+				r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 				return
 			}
 			fmt.Println("Error al abrir el archivo:", err)
@@ -250,7 +251,7 @@ func (r *Rep) reportDisk() {
 		dot += "\n}"
 		r.generateFile(dot, driveletter)
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar.", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar.", driveletter))
 	}
 }
 
@@ -264,7 +265,7 @@ func (r *Rep) reportInode() {
 			file, err := os.Open(absolutePath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+					r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 					return
 				}
 				fmt.Println("Error al abrir el archivo:", err)
@@ -346,10 +347,10 @@ func (r *Rep) reportInode() {
 				}
 			}
 		} else {
-			r.printError(fmt.Sprintf("-> Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
+			r.printError(fmt.Sprintf("Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
 		}
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar", driveletter))
 	}
 }
 
@@ -363,7 +364,7 @@ func (r *Rep) reportBlock() {
 			file, err := os.Open(absolutePath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+					r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 					return
 				}
 				fmt.Println("Error al abrir el archivo:", err)
@@ -412,10 +413,10 @@ func (r *Rep) reportBlock() {
 				}
 			}
 		} else {
-			r.printError(fmt.Sprintf("-> Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
+			r.printError(fmt.Sprintf("Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
 		}
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar", driveletter))
 	}
 }
 
@@ -429,7 +430,7 @@ func (r *Rep) reportJournaling() {
 			file, err := os.Open(absolutePath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+					r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 					return
 				}
 				fmt.Println("Error al abrir el archivo:", err)
@@ -482,16 +483,16 @@ func (r *Rep) reportJournaling() {
 						dot += "\n}"
 						r.generateFile(dot, fmt.Sprintf("%v: %v", namePartition, driveletter))
 					} else {
-						r.printError(fmt.Sprintf("-> Error rep: No puede generarse el reporte para \"%v\" en el disco \"%v\". Journaling no disponible en EXT2", r.Params["id"], driveletter))
+						r.printError(fmt.Sprintf("Error rep: No puede generarse el reporte para \"%v\" en el disco \"%v\". Journaling no disponible en EXT2", r.Params["id"], driveletter))
 					}
 					return
 				}
 			}
 		} else {
-			r.printError(fmt.Sprintf("-> Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
+			r.printError(fmt.Sprintf("Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
 		}
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar", driveletter))
 	}
 }
 
@@ -505,7 +506,7 @@ func (r *Rep) reportBMInode() {
 			file, err := os.Open(absolutePath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+					r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 					return
 				}
 				fmt.Println("Error al abrir el archivo:", err)
@@ -569,10 +570,10 @@ func (r *Rep) reportBMInode() {
 				}
 			}
 		} else {
-			r.printError(fmt.Sprintf("-> Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
+			r.printError(fmt.Sprintf("Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
 		}
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar", driveletter))
 	}
 }
 
@@ -586,7 +587,7 @@ func (r *Rep) reportBMBlock() {
 			file, err := os.Open(absolutePath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+					r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 					return
 				}
 				fmt.Println("Error al abrir el archivo:", err)
@@ -650,10 +651,10 @@ func (r *Rep) reportBMBlock() {
 				}
 			}
 		} else {
-			r.printError(fmt.Sprintf("-> Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
+			r.printError(fmt.Sprintf("Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
 		}
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar", driveletter))
 	}
 }
 
@@ -667,7 +668,7 @@ func (r *Rep) reportTree() {
 			file, err := os.Open(absolutePath)
 			if err != nil {
 				if os.IsNotExist(err) {
-					r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%s\" para reportar.", driveletter))
+					r.printError(fmt.Sprintf("Error rep: No existe el disco \"%s\" para reportar.", driveletter))
 					return
 				}
 				fmt.Println("Error al abrir el archivo:", err)
@@ -701,10 +702,10 @@ func (r *Rep) reportTree() {
 				}
 			}
 		} else {
-			r.printError(fmt.Sprintf("-> Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
+			r.printError(fmt.Sprintf("Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
 		}
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar", driveletter))
 	}
 }
 
@@ -776,10 +777,10 @@ func (r *Rep) reportSb() {
 				}
 			}
 		} else {
-			r.printError(fmt.Sprintf("-> Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
+			r.printError(fmt.Sprintf("Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
 		}
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar", driveletter))
 	}
 }
 
@@ -825,10 +826,10 @@ func (r *Rep) reportFile() {
 				}
 			}
 		} else {
-			r.printError(fmt.Sprintf("-> Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
+			r.printError(fmt.Sprintf("Error rep: No existe el código de partición \"%s\" para reportar el disco \"%v\"", r.Params["id"], driveletter))
 		}
 	} else {
-		r.printError(fmt.Sprintf("-> Error rep: No existe el disco \"%v\" para reportar", driveletter))
+		r.printError(fmt.Sprintf("Error rep: No existe el disco \"%v\" para reportar", driveletter))
 	}
 }
 
@@ -898,7 +899,15 @@ func (r *Rep) generateFile(dot, diskname string) {
 		fmt.Println("Error al eliminar el archivo .dot:", err)
 		return
 	}
-	r.printSuccess(strings.ToLower(r.Params["name"]), diskname)
+
+	_, err = ioutil.ReadFile(absolutePath)
+	if err != nil {
+		fmt.Println("Error al leer el archivo generado:", err)
+	}
+
+	r.Result += dot + "\n"
+
+	// r.printSuccess(strings.ToLower(r.Params["name"]), diskname)
 }
 
 func (r *Rep) percentage(start, firstEmptyByte, size float64) float64 {
@@ -919,11 +928,13 @@ func (r *Rep) calculateSpace(start, firstEmptyByte, size float64) float64 {
 }
 
 func (r *Rep) printError(text string) {
-	fmt.Printf("\033[31m%v [%v:%v]\033[0m\n", text, r.Line, r.Column)
+	fmt.Printf("\033[31m-> %v [%v:%v]\033[0m\n", text, r.Line, r.Column)
+	r.Result += fmt.Sprintf("%v.\n", text)
 }
 
 func (r *Rep) printSuccess(type_, diskName string) {
 	fmt.Printf("\033[35m-> rep: Reporte generado exitosamente. \"%s\" %s [%d:%d]\033[0m\n", type_, diskName, r.Line, r.Column)
+	r.Result += fmt.Sprintf("rep: Reporte generado exitosamente. \"%s\" %s\n", type_, diskName)
 }
 
-func (r *Rep) GetResult() string { return "" }
+func (r *Rep) GetResult() string { return r.Result }

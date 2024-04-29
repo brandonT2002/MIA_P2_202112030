@@ -213,7 +213,7 @@ func (m *Mount) printSuccess(diskName, name, newID, type_ string) {
 		type_ = "LOGICA "
 	}
 	fmt.Printf("\033[32m-> mount: Partición montada exitosamente en %s. %s (%s: %s) [%d:%d]\033[0m\n", diskName, type_, name, newID, m.Line, m.Column)
-	m.Result += fmt.Sprintf("mount: Partición montada exitosamente en %s. %s (%s: %s)", diskName, type_, name, newID)
+	m.Result += fmt.Sprintf("mount: Partición montada exitosamente en %s. %s (%s: %s)\n", diskName, type_, name, newID)
 }
 
 func (m *Mount) GetResult() string { return m.Result }

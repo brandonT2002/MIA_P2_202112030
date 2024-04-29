@@ -99,13 +99,15 @@ func (l *Logout) Exec() {
 			}
 		}
 		fmt.Printf("\033[32m-> logout: Sesión finalizada exitosamente. (%s) [%d:%d]\033[0m\n", env.CurrentLogged.User.Name, l.Line, l.Column)
+		l.Result += fmt.Sprintf("logout: Sesión finalizada exitosamente. (%s)\n", env.CurrentLogged.User.Name)
 		env.CurrentLogged.User = nil
 		env.CurrentLogged.Partition = nil
 		env.CurrentLogged.Driveletter = nil
 		env.CurrentLogged.IDPart = nil
 	} else {
 		fmt.Printf("\033[31m-> Error logout: No hay ningún usuario loggeado actualmente. [%d:%d]\033[0m\n", l.Line, l.Column)
+		l.Result += "Error logout: No hay ningún usuario loggeado actualmente.\n"
 	}
 }
 
-func (l *Logout) GetResult() string { return "" }
+func (l *Logout) GetResult() string { return l.Result }
