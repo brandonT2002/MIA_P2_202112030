@@ -40,6 +40,7 @@ func (m *Mkfs) Exec() {
 		m.mkfs()
 	} else {
 		m.printError("Error mkfs: Faltan parámetros obligatorios para formatear la partición")
+		m.Result += "Error mkfs: Faltan parámetros obligatorios para formatear la partición"
 	}
 }
 
@@ -328,6 +329,7 @@ func (m *Mkfs) validateParams() bool {
 
 func (m *Mkfs) printError(text string) {
 	fmt.Printf("\033[31m-> %s. [%v:%v]\033[0m\n", text, m.Line, m.Column+1)
+	m.Result += fmt.Sprintf("%s.\n", text)
 }
 
 func (m *Mkfs) printSuccess(diskName, name, ID, typePart, typeFs string) {
@@ -344,6 +346,7 @@ func (m *Mkfs) printSuccess(diskName, name, ID, typePart, typeFs string) {
 		typeFs = "EXT3"
 	}
 	fmt.Printf("\033[32m-> mkfs: Partición formateada \"%s\" exitosamente en el disco \"%s\". %s (%s: %s) [%v:%v]\033[0m\n", typeFs, diskName, typePart, name, ID, m.Line, m.Column)
+	m.Result += fmt.Sprintf("mkfs: Partición formateada \"%s\" exitosamente en el disco \"%s\". %s (%s: %s)\n", typeFs, diskName, typePart, name, ID)
 }
 
-func (m *Mkfs) GetResult() string { return "" }
+func (m *Mkfs) GetResult() string { return m.Result }
